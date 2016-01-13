@@ -1,0 +1,5 @@
+app/config/config_development.php
+vendor/*
+.idea/
+.sass-cache/
+/phpunit.xml
