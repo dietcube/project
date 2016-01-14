@@ -28,18 +28,17 @@ main() {
         shift
     done
 
-    current_namespace=$(echo $(basename $(pwd)) | sed -r 's/(^|-)(.)/\U\2\E/g')
-
+    current_namespace=$(echo $(basename $(pwd)) | perl -p -e 's/(^|-)(.)/\U\2\E/g')
     if [ $is_dry ];then
         info "dry run..."
     fi
 
     run echo "Initialize $current_namespace ..."
-    run sed -i -e "s/SampleApp/${current_namespace}/g" composer.json
-    run find app -name *.php | xargs sed -i -e "s/SampleApp/${current_namespace}/g"
-    run find app -name *.html.twig | xargs sed -i -e "s/SampleApp/${current_namespace}/g"
-    run find tests -name *.php | xargs sed -i -e "s/SampleApp/${current_namespace}/g"
-    run sed -i -e "s/SampleApp/${current_namespace}/g" webroot/index.php
+    run perl -pi -e "s/SampleApp/${current_namespace}/g" composer.json
+    run find app -name *.php | xargs perl -pi -e "s/SampleApp/${current_namespace}/g"
+    run find app -name *.html.twig | xargs perl -pi -e "s/SampleApp/${current_namespace}/g"
+    run find tests -name *.php | xargs perl -pi -e "s/SampleApp/${current_namespace}/g"
+    run perl -pi -e "s/SampleApp/${current_namespace}/g" webroot/index.php
     run mv app/config/config_development.php.sample app/config/config_development.php
     run chmod 777 tmp
     run composer dumpautoload
