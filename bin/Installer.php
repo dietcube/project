@@ -65,7 +65,7 @@ class Installer
         $basePattern = basename($pattern);
         $baseDir = dirname($pattern);
         if ($baseDir) {
-            $basepath = '$baseDir/*';
+            $basepath = "$baseDir/*";
         } else {
             $basepath = '*';
         }
