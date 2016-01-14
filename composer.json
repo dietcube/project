@@ -12,12 +12,13 @@
   },
   "autoload": {
     "psr-4": {
-      "SampleApp\\": "app/"
+      "SampleApp\\": "app/",
+      "DietcubeInstaller\\": "bin/"
     }
   },
   "scripts": {
     "post-create-project-cmd": [
-      "./bin/dietcube-setup.sh"
+      "DietcubeInstaller\\Installer::initialize"
     ]
   }
 }
