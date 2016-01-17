@@ -6,6 +6,7 @@ use Composer\Script\Event;
 
 class Installer
 {
+    const PLACEHOLDER = 'SampleApp';
     public static function initialize(Event $event)
     {
         $io = $event->getIO();
@@ -21,7 +22,7 @@ class Installer
 
         foreach ($targets as $target) {
             $sourceText = file_get_contents($target);
-            $newSource = str_replace('SampleApp', $currentNamespace, $sourceText);
+            $newSource = str_replace(self::PLACEHOLDER, $currentNamespace, $sourceText);
             file_put_contents($target, $newSource);
         }
         copy('app/config/config_development.php.sample', 'app/config/config_development.php');
@@ -32,10 +33,19 @@ class Installer
 
         $gen = $composer->getAutoloadGenerator();
         $gen->setDevMode(true);
+
+        // rename "autoload"
+        $package = $composer->getPackage();
+        $autoload = $package->getAutoload();
+        $autoload['psr-4'][$currentNamespace . '\\'] =
+            $autoload['psr-4'][self::PLACEHOLDER . '\\'];
+        unset($autoload['psr-4'][self::PLACEHOLDER . '\\']);
+        $package->setAutoload($autoload);
+
         $gen->dump(
             $composer->getConfig(),
             $composer->getRepositoryManager()->getLocalRepository(),
-            $composer->getPackage(),
+            $package,
             $composer->getInstallationManager(),
             'composer',
             false //optimize
