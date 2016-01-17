@@ -8,10 +8,7 @@ class Installer
 {
     public static function initialize(Event $event)
     {
-        $composer = $event->getComposer();
         $io = $event->getIO();
-        $config = $composer->getConfig();
-
         $currentNamespace = self::camelize(basename(getcwd()));
 
         $io->write("Initialize $currentNamespace ...");
@@ -27,30 +24,26 @@ class Installer
             $newSource = str_replace('SampleApp', $currentNamespace, $sourceText);
             file_put_contents($target, $newSource);
         }
-        rename('app/config/config_development.php.sample', 'app/config/config_development.php');
+        copy('app/config/config_development.php.sample', 'app/config/config_development.php');
         chmod('tmp', 0777);
 
-
         // dumpautoload
-        $generator = $composer->getAutoloadGenerator();
-        $generator->setDevMode(true);
-        $generator->setRunScripts(true);
-        $generator->setClassMapAuthoritative(
-            $config->get('classmap-authoritative')
-        );
+        $composer = $event->getComposer();
 
-        $generator->dump(
-            $config,
+        $gen = $composer->getAutoloadGenerator();
+        $gen->setDevMode(true);
+        $gen->dump(
+            $composer->getConfig(),
             $composer->getRepositoryManager()->getLocalRepository(),
             $composer->getPackage(),
             $composer->getInstallationManager(),
             'composer',
-            $config->get('optimize-autoloader')
+            false //optimize
         );
-                                                         
+
         $io->write('-------------------------------------------------------------------------');
         $io->write('');
-        $io->write('Dietcube setup completed.');
+        $io->write('<comment>Dietcube setup completed.</comment>');
         $io->write('');
         $io->write('Try now with built-in server:');
         $io->write('$ DIET_ENV=development php -d variables_order=EGPCS -S 0:8999 -t webroot/');
