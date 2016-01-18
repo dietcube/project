@@ -10,7 +10,8 @@ class Installer
     public static function initialize(Event $event)
     {
         $io = $event->getIO();
-        $currentNamespace = self::camelize(basename(getcwd()));
+        $projectDirname = basename(getcwd());
+        $currentNamespace = self::camelize($projectDirname);
 
         $io->write("Initialize $currentNamespace ...");
 
@@ -56,6 +57,7 @@ class Installer
         $io->write('<comment>Dietcube setup completed.</comment>');
         $io->write('');
         $io->write('Try now with built-in server:');
+        $io->write("$ cd $projectDirname");
         $io->write('$ DIET_ENV=development php -d variables_order=EGPCS -S 0:8999 -t webroot/');
         $io->write('');
         $io->write('-------------------------------------------------------------------------');
