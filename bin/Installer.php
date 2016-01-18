@@ -3,6 +3,8 @@
 namespace DietcubeInstaller;
 
 use Composer\Script\Event;
+use Composer\Factory;
+use Composer\Json\JsonFile;
 
 class Installer
 {
@@ -41,7 +43,15 @@ class Installer
         $autoload['psr-4'][$current_namespace . '\\'] =
             $autoload['psr-4'][self::PLACEHOLDER . '\\'];
         unset($autoload['psr-4'][self::PLACEHOLDER . '\\']);
+        unset($autoload['psr-4']['DietcubeInstaller\\']);
         $package->setAutoload($autoload);
+
+        // rewrite json file
+        $json = new JsonFile(Factory::getComposerFile());
+        $composer_definition = $json->read();
+        unset($composer_definition['autoload']['psr-4']['DietcubeInstaller\\']);
+        unset($composer_definition['scripts']);
+        $json->write($composer_definition);
 
         $gen->dump(
             $composer->getConfig(),
