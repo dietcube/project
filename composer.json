@@ -1,24 +1,24 @@
 {
-  "name": "dietcube/dietcube-project",
-  "description": "Project skeleton for Dietcube 1.0.x",
-  "require-dev": {
-    "phpunit/phpunit": "5.1.x",
-    "fabpot/php-cs-fixer": "1.x",
-    "phpunit/php-code-coverage": "3.x"
-  },
-  "license": "MIT",
-  "require": {
-    "dietcube/dietcube": "1.0.x"
-  },
-  "autoload": {
-    "psr-4": {
-      "SampleApp\\": "app/",
-      "DietcubeInstaller\\": "bin/"
+    "name": "dietcube/dietcube-project",
+    "description": "Project skeleton for Dietcube 1.0.x",
+    "require-dev": {
+        "phpunit/phpunit": "5.1.x",
+        "fabpot/php-cs-fixer": "1.x",
+        "phpunit/php-code-coverage": "3.x"
+    },
+    "license": "MIT",
+    "require": {
+        "dietcube/dietcube": "1.0.x"
+    },
+    "autoload": {
+        "psr-4": {
+            "SampleApp\\": "app/",
+            "DietcubeInstaller\\": "bin/"
+        }
+    },
+    "scripts": {
+        "post-create-project-cmd": [
+            "DietcubeInstaller\\Installer::initialize"
+        ]
     }
-  },
-  "scripts": {
-    "post-create-project-cmd": [
-      "DietcubeInstaller\\Installer::initialize"
-    ]
-  }
 }

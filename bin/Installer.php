@@ -3,6 +3,8 @@
 namespace DietcubeInstaller;
 
 use Composer\Script\Event;
+use Composer\Factory;
+use Composer\Json\JsonFile;
 
 class Installer
 {
@@ -10,10 +12,10 @@ class Installer
     public static function initialize(Event $event)
     {
         $io = $event->getIO();
-        $projectDirname = basename(getcwd());
-        $currentNamespace = self::camelize($projectDirname);
+        $project_dirname = basename(getcwd());
+        $current_namespace = self::camelize($project_dirname);
 
-        $io->write("Initialize $currentNamespace ...");
+        $io->write("Initialize $current_namespace ...");
 
         $targets = self::globRecursive('app/*.php');
         $targets = array_merge($targets, self::globRecursive('app/*.html.twig'));
@@ -22,9 +24,9 @@ class Installer
         $targets[] = 'webroot/index.php';
 
         foreach ($targets as $target) {
-            $sourceText = file_get_contents($target);
-            $newSource = str_replace(self::PLACEHOLDER, $currentNamespace, $sourceText);
-            file_put_contents($target, $newSource);
+            $source_text = file_get_contents($target);
+            $new_source = str_replace(self::PLACEHOLDER, $current_namespace, $source_text);
+            file_put_contents($target, $new_source);
         }
         copy('app/config/config_development.php.sample', 'app/config/config_development.php');
         chmod('tmp', 0777);
@@ -38,10 +40,18 @@ class Installer
         // rename "autoload"
         $package = $composer->getPackage();
         $autoload = $package->getAutoload();
-        $autoload['psr-4'][$currentNamespace . '\\'] =
+        $autoload['psr-4'][$current_namespace . '\\'] =
             $autoload['psr-4'][self::PLACEHOLDER . '\\'];
         unset($autoload['psr-4'][self::PLACEHOLDER . '\\']);
+        unset($autoload['psr-4']['DietcubeInstaller\\']);
         $package->setAutoload($autoload);
+
+        // rewrite json file
+        $json = new JsonFile(Factory::getComposerFile());
+        $composer_definition = $json->read();
+        unset($composer_definition['autoload']['psr-4']['DietcubeInstaller\\']);
+        unset($composer_definition['scripts']);
+        $json->write($composer_definition);
 
         $gen->dump(
             $composer->getConfig(),
@@ -57,26 +67,34 @@ class Installer
         $io->write('<comment>Dietcube setup completed.</comment>');
         $io->write('');
         $io->write('Try now with built-in server:');
-        $io->write("$ cd $projectDirname");
+        $io->write("$ cd $project_dirname");
         $io->write('$ DIET_ENV=development php -d variables_order=EGPCS -S 0:8999 -t webroot/');
         $io->write('');
         $io->write('-------------------------------------------------------------------------');
+
+        self::removeMe();
+    }
+
+    private static function removeMe()
+    {
+        unlink(__FILE__);
+        rmdir(__DIR__);
     }
 
     private static function globRecursive($pattern)
     {
         $files = glob($pattern, GLOB_NOSORT);
 
-        $basePattern = basename($pattern);
-        $baseDir = dirname($pattern);
-        if ($baseDir) {
-            $basepath = "$baseDir/*";
+        $base_pattern = basename($pattern);
+        $base_dir = dirname($pattern);
+        if ($base_dir) {
+            $basepath = "$base_dir/*";
         } else {
             $basepath = '*';
         }
 
         foreach (glob($basepath, GLOB_ONLYDIR|GLOB_NOSORT) as $dir) {
-            $files = array_merge($files, self::globRecursive("$dir/$basePattern"));
+            $files = array_merge($files, self::globRecursive("$dir/$base_pattern"));
         }
         return $files;
     }
