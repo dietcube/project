@@ -71,6 +71,14 @@ class Installer
         $io->write('$ DIET_ENV=development php -d variables_order=EGPCS -S 0:8999 -t webroot/');
         $io->write('');
         $io->write('-------------------------------------------------------------------------');
+
+        self::removeMe();
+    }
+
+    private static function removeMe()
+    {
+        unlink(__FILE__);
+        rmdir(__DIR__);
     }
 
     private static function globRecursive($pattern)
