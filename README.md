@@ -4,9 +4,14 @@ Project skeleton for Dietcube
 Setup
 -----
 
+This package is a project skeleton for Dietcube.
+
 ```
-composer install
+composer create-project dietcube/dietcube-project -s dev your-project
 ```
+
+(`your-project` is a sample directory name for the project. Camelized name of the directory is used as your application namespace (e.g. `YourProject\\`).
+
 
 Configuration File
 ------------------
@@ -34,6 +39,7 @@ Environment
 `DIET_ENV` is the ENV name.
 
 If `DIET_ENV` is not set for any environment variable (Dietcube checks `$_SERVER['DIET_ENV']` and `getenv('DIET_ENV')`), `Dispatcher::getEnv()` returns `production` by default.
+
 Typically, `development` is used for development environment so `dietcube-project`'s initialise script generates `app/config/config_development.php` for default development config file.
 
 ### Example: Configuration of Web Server
