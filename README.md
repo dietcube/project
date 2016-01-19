@@ -55,5 +55,5 @@ fastcgi_param  DIET_ENV production;
 ### Run with PHP built-in server
 
 ```
-DIET_ENV=development php -d variables_order=EGPCS -S localhost:8080 -t webroot/
+DIET_ENV=development php -d variables_order=EGPCS -S 0:8080 -t webroot/
 ```
