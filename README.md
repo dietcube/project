@@ -7,7 +7,7 @@ Setup
 This package is a project skeleton for Dietcube.
 
 ```
-composer create-project dietcube/dietcube-project -s dev your-project
+composer create-project dietcube/project -s dev your-project
 ```
 
 (`your-project` is a sample directory name for the project. Camelized name of the directory is used as your application namespace (e.g. `YourProject\\`).
